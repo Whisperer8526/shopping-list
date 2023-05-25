@@ -1,12 +1,11 @@
 import pandas as pd
 import customtkinter as tk
-from collections import Counter
 
 root = tk.CTk()
 root.geometry("1000x500")
 root.title("Shopping List Assembler")
 
-full_data = pd.read_excel('./shopping/recipe_db.xlsx')
+full_data = pd.read_excel('recipe_db.xlsx')
 
 
 class Recipe:
