@@ -1,12 +1,8 @@
 import pandas as pd
 import customtkinter as tk
 
-root = tk.CTk()
-root.geometry("1000x500")
-root.title("Shopping List Assembler")
 
-full_data = pd.read_excel('recipe_db.xlsx')
-
+# === Data processing Functions ===
 
 class Recipe:
     
@@ -51,7 +47,6 @@ def merge_ingredient_dictionaries(recipes_list: list):
             result_dict = input_dict
         
         else:
-            print(len(result_dict))
             for ingredient in input_dict.keys():
                 if ingredient in result_dict.keys():
                     for unit in input_dict[ingredient].keys():
@@ -83,6 +78,8 @@ def flatten_dictionary(dictionary: dict):
     
     return flattened
 
+
+# === GUI Functions ===
 
 def option_menu_callback(choice):
     choice
@@ -128,14 +125,13 @@ def generate_shopping_list_event():
         print(result_dataframe)
     
 
-def build_option_menu(week_frame, 
-                      day_index: int, 
-                      meal_index: int, 
-                      item_list: list, 
-                      option_menu_objects: dict):
+def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: list, option_menu_objects: dict): 
+    '''
+    Creates option menu object. It stores name of the dish selected for given day and meal.
+    '''
         
-        item_list.append('')
-        option_menu = tk.CTkOptionMenu(week_frame,
+    item_list.append('')
+    option_menu = tk.CTkOptionMenu(week_frame,
                                     values=item_list,
                                     command=option_menu_callback,
                                     variable=tk.StringVar(),
@@ -144,13 +140,17 @@ def build_option_menu(week_frame,
                                     dynamic_resizing=True,
                                     font=('Arial', 10)
                                     )
-        option_menu.set('')
-        option_menu.grid(row=meal_index, 
+    option_menu.set('')
+    option_menu.grid(row=meal_index, 
                         column=day_index, 
                         sticky='we')
-        option_menu_objects.update({f'{day_index}_{meal_index}' : option_menu})
+    option_menu_objects.update({f'{day_index}_{meal_index}' : option_menu})
 
 def build_week_frame_table(option_menu_objects):
+
+    '''
+    Creates a table containing option menu objects
+    '''
 
     week_frame = tk.CTkFrame(root)
     for i in range(8):
@@ -205,18 +205,32 @@ def build_week_frame_table(option_menu_objects):
                     
     return week_frame
 
+# === Main ===
+
+# Define window resolution and app name
+root = tk.CTk()
+root.geometry("1000x500")
+root.title("Shopping List Assembler")
+
+# Load data from excel file
+full_data = pd.read_excel('recipe_db.xlsx')
+
+# Build main table
 option_menu_objects = {}
 week_frame = build_week_frame_table(option_menu_objects)
 week_frame.pack(fill='x', padx=20, pady=20)
 
+# Create 'Clear' button
 clear_options_button = tk.CTkButton(root, 
                                     text="Clear", 
                                     command=clear_options_event)
 clear_options_button.pack(padx=20, pady=20)
 
+# Create button generating shopping list
 generate_shopping_list_button = tk.CTkButton(root, 
                                              text="Generate shopping list", 
                                              command=generate_shopping_list_event)
 generate_shopping_list_button.pack(padx=20, pady=20)
+
 
 root.mainloop()
