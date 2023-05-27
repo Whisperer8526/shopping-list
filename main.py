@@ -2,7 +2,8 @@ import pandas as pd
 import customtkinter as tk
 
 
-# === Data processing Functions ===
+# ========================== Data processing Functions ===========================
+
 
 class Recipe:
     
@@ -10,10 +11,11 @@ class Recipe:
         self.name = name
         self.data = full_data[full_data.name == self.name]
         self.is_breakfast = self.data.breakfast.unique()[0]
-        self.is_lunch = self.data.lunch.unique()[0]
-        self.is_dinner = self.data.dinner.unique()[0]
-        self.is_salad = self.data.salad.unique()[0]
+        self.is_lunch = self.data.lunch_main.unique()[0]
+        self.is_filler = self.data.lunch_filler.unique()[0]
+        self.is_salad = self.data.lunch_salad.unique()[0]
         self.is_intermeal = self.data.intermeal.unique()[0]
+        self.is_dinner = self.data.dinner.unique()[0]
         self.double_portion = self.data.double_portion.unique()[0]
         
     def get_ingredients(self):
@@ -79,10 +81,12 @@ def flatten_dictionary(dictionary: dict):
     return flattened
 
 
-# === GUI Functions ===
+# ================= GUI Functions =================================
+
 
 def option_menu_callback(choice):
     choice
+
 
 def clear_options_event():
     for option in option_menu_objects:
@@ -122,10 +126,11 @@ def generate_shopping_list_event():
     if result_dataframe.empty:
         print('No recipes selected.')
     else:
+        #result_dataframe.to_excel('Lista zakupów.xlsx')
         print(result_dataframe)
     
 
-def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: list, option_menu_objects: dict): 
+def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: list, option_menu_objects: dict, color: str): 
     '''
     Creates option menu object. It stores name of the dish selected for given day and meal.
     '''
@@ -138,13 +143,16 @@ def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: li
                                     corner_radius=0,
                                     anchor='w',
                                     dynamic_resizing=True,
-                                    font=('Arial', 10)
+                                    font=('Arial', 10),
+                                    button_color=color,
+                                    fg_color=color
                                     )
     option_menu.set('')
     option_menu.grid(row=meal_index, 
                         column=day_index, 
                         sticky='we')
     option_menu_objects.update({f'{day_index}_{meal_index}' : option_menu})
+
 
 def build_week_frame_table(option_menu_objects):
 
@@ -157,7 +165,7 @@ def build_week_frame_table(option_menu_objects):
         week_frame.columnconfigure(i, weight=1)
 
     weekdays = ['','Pn', 'Wt', 'Śr', 'Czw', 'Pt', 'So', 'Nd']
-    meals = ['', 'Śniadanie', 'Brunch', 'Obiad', 'Podwieczorek', 'Kolacja']
+    meals = ['', 'Śniadanie', 'Brunch', 'Obiad', 'Zapychacz', 'Surówka', 'Podwieczorek', 'Kolacja']
 
     for day_index, day in enumerate(weekdays):
         for meal_index, meal in enumerate(meals):
@@ -176,7 +184,8 @@ def build_week_frame_table(option_menu_objects):
                                       day_index=day_index,
                                     meal_index=meal_index,
                                     item_list= full_data[full_data.breakfast == True]['name'].unique().tolist(),
-                                    option_menu_objects=option_menu_objects
+                                    option_menu_objects=option_menu_objects,
+                                    color="#3C565B" #teal
                                     )
                     
                 elif meal == 'Brunch' or meal == 'Podwieczorek':
@@ -184,15 +193,35 @@ def build_week_frame_table(option_menu_objects):
                                       day_index=day_index,
                                       meal_index=meal_index,
                                       item_list= full_data[full_data.intermeal == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects
+                                      option_menu_objects=option_menu_objects,
+                                      color='#483C32' #oak brown
                                     )
                 
                 elif meal == 'Obiad':
                     build_option_menu(week_frame,
                                       day_index=day_index,
                                       meal_index=meal_index,
-                                      item_list= full_data[full_data.lunch == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects
+                                      item_list= full_data[full_data.lunch_main == True]['name'].unique().tolist(),
+                                      option_menu_objects=option_menu_objects,
+                                      color='#5E5A80' #pale purple
+                                    )
+                    
+                elif meal == 'Zapychacz':
+                    build_option_menu(week_frame,
+                                      day_index=day_index,
+                                      meal_index=meal_index,
+                                      item_list= full_data[full_data.lunch_filler == True]['name'].unique().tolist(),
+                                      option_menu_objects=option_menu_objects,
+                                      color='#5E5A80' #pale purple
+                                    )
+                    
+                elif meal == 'Surówka':
+                    build_option_menu(week_frame,
+                                      day_index=day_index,
+                                      meal_index=meal_index,
+                                      item_list= full_data[full_data.lunch_salad == True]['name'].unique().tolist(),
+                                      option_menu_objects=option_menu_objects,
+                                      color='#5E5A80' #pale purple
                                     )
                 
                 elif meal == 'Kolacja':
@@ -200,12 +229,14 @@ def build_week_frame_table(option_menu_objects):
                                       day_index=day_index,
                                       meal_index=meal_index,
                                       item_list= full_data[full_data.dinner == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects
+                                      option_menu_objects=option_menu_objects,
+                                      color='#7F462C' #sepia
                                     )
                     
     return week_frame
 
-# === Main ===
+
+# ================================= Main ======================================
 
 # Define window resolution and app name
 root = tk.CTk()
