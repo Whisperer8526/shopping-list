@@ -36,7 +36,7 @@ class Recipe:
         return ingredients_dict
 
     
-def merge_ingredient_dictionaries(recipes_list: list):
+def merge_ingredient_dictionaries(recipes_list: list[dict]):
     '''
     Merges nested dictionaries and adds up values.   
     '''
@@ -129,28 +129,30 @@ def generate_shopping_list_event():
         #result_dataframe.to_excel('Lista zakupów.xlsx')
         print(result_dataframe)
     
-
 def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: list, option_menu_objects: dict, color: str): 
     '''
     Creates option menu object. It stores name of the dish selected for given day and meal.
     '''
         
     item_list.append('')
-    option_menu = tk.CTkOptionMenu(week_frame,
-                                    values=item_list,
-                                    command=option_menu_callback,
-                                    variable=tk.StringVar(),
-                                    corner_radius=0,
-                                    anchor='w',
-                                    dynamic_resizing=True,
-                                    font=('Arial', 10),
-                                    button_color=color,
-                                    fg_color=color
-                                    )
+    option_menu = tk.CTkOptionMenu(
+        week_frame,
+        values=item_list,
+        command=option_menu_callback,
+        variable=tk.StringVar(),
+        corner_radius=0,
+        anchor='w',
+        dynamic_resizing=True,
+        font=('Arial', 10),
+        button_color=color,
+        fg_color=color
+        )
     option_menu.set('')
-    option_menu.grid(row=meal_index, 
-                        column=day_index, 
-                        sticky='we')
+    option_menu.grid(
+        row=meal_index, 
+        column=day_index, 
+        sticky='we'
+        )
     option_menu_objects.update({f'{day_index}_{meal_index}' : option_menu})
 
 
@@ -180,57 +182,63 @@ def build_week_frame_table(option_menu_objects):
             
             else:           
                 if meal == 'Śniadanie':
-                    build_option_menu(week_frame,
-                                      day_index=day_index,
-                                    meal_index=meal_index,
-                                    item_list= full_data[full_data.breakfast == True]['name'].unique().tolist(),
-                                    option_menu_objects=option_menu_objects,
-                                    color="#3C565B" #teal
-                                    )
+                    build_option_menu(
+                        week_frame,
+                        day_index=day_index,
+                        meal_index=meal_index,
+                        item_list=settings['breakfast'].get('item_list'),
+                        option_menu_objects=option_menu_objects,
+                        color=settings['breakfast'].get('button_color')
+                        )
                     
                 elif meal == 'Brunch' or meal == 'Podwieczorek':
-                    build_option_menu(week_frame,
-                                      day_index=day_index,
-                                      meal_index=meal_index,
-                                      item_list= full_data[full_data.intermeal == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects,
-                                      color='#483C32' #oak brown
-                                    )
+                    build_option_menu(
+                        week_frame,
+                        day_index=day_index,
+                        meal_index=meal_index,
+                        item_list=settings['intermeal'].get('item_list'),
+                        option_menu_objects=option_menu_objects,
+                        color=settings['intermeal'].get('button_color')
+                        )
                 
                 elif meal == 'Obiad':
-                    build_option_menu(week_frame,
-                                      day_index=day_index,
-                                      meal_index=meal_index,
-                                      item_list= full_data[full_data.lunch_main == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects,
-                                      color='#5E5A80' #pale purple
+                    build_option_menu(
+                        week_frame,
+                        day_index=day_index,
+                        meal_index=meal_index,
+                        item_list=settings['lunch_main'].get('item_list'),
+                        option_menu_objects=option_menu_objects,
+                        color=settings['lunch_main'].get('button_color')
                                     )
                     
                 elif meal == 'Zapychacz':
-                    build_option_menu(week_frame,
-                                      day_index=day_index,
-                                      meal_index=meal_index,
-                                      item_list= full_data[full_data.lunch_filler == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects,
-                                      color='#5E5A80' #pale purple
+                    build_option_menu(
+                        week_frame,
+                        day_index=day_index,
+                        meal_index=meal_index,
+                        item_list=settings['lunch_filler'].get('item_list'),
+                        option_menu_objects=option_menu_objects,
+                        color=settings['lunch_filler'].get('button_color')
                                     )
                     
                 elif meal == 'Surówka':
-                    build_option_menu(week_frame,
-                                      day_index=day_index,
-                                      meal_index=meal_index,
-                                      item_list= full_data[full_data.lunch_salad == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects,
-                                      color='#5E5A80' #pale purple
+                    build_option_menu(
+                        week_frame,
+                        day_index=day_index,
+                        meal_index=meal_index,
+                        item_list=settings['lunch_salad'].get('item_list'),
+                        option_menu_objects=option_menu_objects,
+                        color=settings['lunch_salad'].get('button_color')
                                     )
                 
                 elif meal == 'Kolacja':
-                    build_option_menu(week_frame,
-                                      day_index=day_index,
-                                      meal_index=meal_index,
-                                      item_list= full_data[full_data.dinner == True]['name'].unique().tolist(),
-                                      option_menu_objects=option_menu_objects,
-                                      color='#7F462C' #sepia
+                    build_option_menu(
+                        week_frame,
+                        day_index=day_index,
+                        meal_index=meal_index,
+                        item_list=settings['dinner'].get('item_list'),
+                        option_menu_objects=option_menu_objects,
+                        color=settings['dinner'].get('button_color')
                                     )
                     
     return week_frame
@@ -245,6 +253,37 @@ root.title("Shopping List Assembler")
 
 # Load data from excel file
 full_data = pd.read_excel('recipe_db.xlsx')
+
+settings = {
+    'breakfast' : {
+        'item_list' : full_data[full_data.breakfast == True]['name'].unique().tolist(),
+        'button_color' : '#3C565B' #teal
+    },
+    'intermeal' : {
+        'item_list' : full_data[full_data.intermeal == True]['name'].unique().tolist(),
+        'button_color' : '#483C32' #oak brown
+    },
+    'lunch_main' : {
+        'item_list' : full_data[full_data.lunch_main == True]['name'].unique().tolist(),
+        'button_color' : '#5E5A80' #pale purple
+    },
+    'lunch_filler' : {
+        'item_list' : full_data[full_data.lunch_filler == True]['name'].unique().tolist(),
+        'button_color' : '#5E5A80' #pale purple
+    },
+    'lunch_salad' : {
+        'item_list' : full_data[full_data.lunch_salad == True]['name'].unique().tolist(),
+        'button_color' : '#5E5A80' #pale purple
+    },
+    'dinner' : {
+        'item_list' : full_data[full_data.dinner == True]['name'].unique().tolist(),
+        'button_color' : '#7F462C' #sepia
+    },
+
+
+}
+
+
 
 # Build main table
 option_menu_objects = {}
