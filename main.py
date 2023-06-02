@@ -18,7 +18,7 @@ class Recipe:
         self.is_dinner = self.data.dinner.unique()[0]
         self.double_portion = self.data.double_portion.unique()[0]
         
-    def get_ingredients(self):
+    def get_ingredients(self) -> dict[float]:
         '''
         Converts DataFrame with ingredient info into nested dictionary.
         '''
@@ -36,7 +36,7 @@ class Recipe:
         return ingredients_dict
 
     
-def merge_ingredient_dictionaries(recipes_list: list[dict]):
+def merge_ingredient_dictionaries(recipes_list: list[dict]) -> dict[float]:
     '''
     Merges nested dictionaries and adds up values.   
     '''
@@ -66,7 +66,7 @@ def merge_ingredient_dictionaries(recipes_list: list[dict]):
     return result_dict
 
 
-def flatten_dictionary(dictionary: dict):
+def flatten_dictionary(dictionary: dict[float]) -> dict[float]:
     '''
     Flattens nested dictionary by merging keys.
     '''
@@ -128,8 +128,16 @@ def generate_shopping_list_event():
     else:
         #result_dataframe.to_excel('Lista zakupów.xlsx')
         print(result_dataframe)
+
+
+def build_option_menu(
+        week_frame: tk.CTkFrame, 
+        day_index: int, 
+        meal_index: int, 
+        item_list: list[str], 
+        option_menu_objects: dict[tk.CTkOptionMenu], 
+        color: str): 
     
-def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: list, option_menu_objects: dict, color: str): 
     '''
     Creates option menu object. It stores name of the dish selected for given day and meal.
     '''
@@ -156,7 +164,7 @@ def build_option_menu(week_frame, day_index: int, meal_index: int, item_list: li
     option_menu_objects.update({f'{day_index}_{meal_index}' : option_menu})
 
 
-def build_week_frame_table(option_menu_objects):
+def build_week_frame_table(option_menu_objects: dict[tk.CTkOptionMenu]) -> tk.CTkFrame:
 
     '''
     Creates a table containing option menu objects
