@@ -75,13 +75,19 @@ if __name__ == "__main__":
                                       command= lambda: load_data('recipe_db.xlsx'))
     reload_data_button.grid(row=5, column=1, sticky='wesn')
 
+    # Texbox prompt
+    textbox = tk.CTkTextbox(root, corner_radius=0, font=('Consolas', 9))
+    textbox.configure(state='normal',
+                      text_color='white')
+    textbox.grid(row=6, column=4, columnspan=4, rowspan=15, sticky='nwe', padx=10)
 
     # Create button generating shopping list
     generate_shopping_list_button = tk.CTkButton(root, 
                                                 text="Generate shopping list", 
                                                 command=lambda: generate_results_event(data=DATA, 
                                                                                        option_menu_objects=option_menu_objects, 
-                                                                                       to_excel=False),
+                                                                                       to_excel=False,
+                                                                                       textbox=textbox),
                                                 corner_radius=0                                       )
     generate_shopping_list_button.grid(row=5, column=4, columnspan=4, padx=10, sticky='wes')
 
@@ -93,8 +99,6 @@ if __name__ == "__main__":
                                                                                 to_excel=True))
     save_to_excel_button.grid(row=6, column=0, padx=10, sticky='nw')
 
-    textbox = tk.CTkTextbox(root, corner_radius=0)
-    textbox.configure(state='disabled')
-    textbox.grid(row=6, column=4, columnspan=4, rowspan=15, sticky='nwe', padx=10)
+    
 
     root.mainloop()

@@ -1,4 +1,5 @@
 import pandas as pd
+import customtkinter as tk
 
 class Recipe:
     
@@ -76,3 +77,18 @@ def flatten_dictionary(dictionary: dict[float]) -> dict[float]:
     #flattened.pop(' ', None)    
     
     return flattened
+
+def convert_recipes_to_prompt(merged_recipes: dict, textbox: tk.CTkTextbox):
+    textbox.delete(index1='0.0', index2='500.0')
+
+    unit_index = 20
+    value_index = 30
+
+    for i, (ingredient, units) in enumerate(merged_recipes.items()):
+        for item in units.items():
+            unit = f'[{item[0]}]'
+            value = f'{item[1]}'
+
+            string = f'''{ingredient}{' '*(unit_index-len(ingredient))}{unit}{' '*(value_index-len(unit))}{value}\n'''
+            
+            textbox.insert(index=f'{i}.0', text=string)

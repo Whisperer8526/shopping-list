@@ -3,7 +3,8 @@ import customtkinter as tk
 from data_processing import (
     Recipe,
     merge_ingredient_dictionaries,
-    flatten_dictionary
+    flatten_dictionary,
+    convert_recipes_to_prompt
 )
 
 def option_menu_callback(choice):
@@ -15,7 +16,10 @@ def clear_options_event(option_menu_objects: dict[tk.CTkOptionMenu]):
         option_menu_objects[option].set('')
 
 
-def generate_results_event(data: pd.DataFrame, option_menu_objects: dict[tk.CTkOptionMenu], to_excel: bool):
+def generate_results_event(data: pd.DataFrame, 
+                           option_menu_objects: dict[tk.CTkOptionMenu], 
+                           to_excel: bool, 
+                           textbox: tk.CTkTextbox):
 
     selected_recipes = []
     for option in option_menu_objects.keys():
@@ -46,12 +50,31 @@ def generate_results_event(data: pd.DataFrame, option_menu_objects: dict[tk.CTkO
     )
 
     if result_dataframe.empty:
+        textbox.delete(index1='0.0', index2='500.0')
+        textbox.insert(index='0.0', text='No recipes selected.')
         print('No recipes selected.')
     else:
         if to_excel:
             result_dataframe.to_excel('Lista zakupów.xlsx')
         else:
+            
+            convert_recipes_to_prompt(merged_recipes, textbox)
             print(result_dataframe)
+
+def convert_recipes_to_prompt(merged_recipes: dict, textbox: tk.CTkTextbox):
+    textbox.delete(index1='0.0', index2='500.0')
+
+    unit_index = 25
+    value_index = 15
+
+    for i, (ingredient, units) in enumerate(merged_recipes.items()):
+        for item in units.items():
+            unit = f'[{item[0]}]'
+            value = f'{item[1]}'
+
+            string = f'''{ingredient}{' '*(unit_index-len(ingredient))}{unit}{' '*(value_index-len(unit))}{value}\n'''
+            
+            textbox.insert(index=f'{i}.0', text=string)
 
 
 def build_option_menu(
