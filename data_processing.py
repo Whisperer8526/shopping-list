@@ -72,5 +72,7 @@ def flatten_dictionary(dictionary: dict[float]) -> dict[float]:
             unit = item[0]
             value = item[1]
             flattened.update({f'{ingredient} [{unit}]' : value})
+
+    #flattened.pop(' ', None)    
     
     return flattened

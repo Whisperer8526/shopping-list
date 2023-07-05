@@ -15,7 +15,7 @@ def clear_options_event(option_menu_objects: dict[tk.CTkOptionMenu]):
         option_menu_objects[option].set('')
 
 
-def generate_shopping_list_event(option_menu_objects: dict[tk.CTkOptionMenu], data: pd.DataFrame):
+def generate_results_event(data: pd.DataFrame, option_menu_objects: dict[tk.CTkOptionMenu], to_excel: bool):
 
     selected_recipes = []
     for option in option_menu_objects.keys():
@@ -48,8 +48,10 @@ def generate_shopping_list_event(option_menu_objects: dict[tk.CTkOptionMenu], da
     if result_dataframe.empty:
         print('No recipes selected.')
     else:
-        #result_dataframe.to_excel('Lista zakupów.xlsx')
-        print(result_dataframe)
+        if to_excel:
+            result_dataframe.to_excel('Lista zakupów.xlsx')
+        else:
+            print(result_dataframe)
 
 
 def build_option_menu(
@@ -63,11 +65,11 @@ def build_option_menu(
     '''
     Creates option menu object. It stores name of the dish selected for given day and meal.
     '''
-        
-    item_list.append('')
+    
+    #item_list.append('')
     option_menu = tk.CTkOptionMenu(
         week_frame,
-        values=item_list,
+        values= item_list + [''],
         command=option_menu_callback,
         variable=tk.StringVar(),
         corner_radius=0,
