@@ -1,6 +1,34 @@
 import pandas as pd
 import customtkinter as tk
 
+class Data:
+
+    def __init__(self, data_path: str):
+        self.data_path = data_path
+        self.data = pd.read_excel(data_path)
+
+    def reload_data(self):
+        self.data = pd.read_excel(self.data_path)
+
+    def get_breakfast_list(self):
+        return self.data[self.data.breakfast == True]['name'].unique().tolist()
+    
+    def get_intermeal_list(self):
+        return self.data[self.data.intermeal == True]['name'].unique().tolist()
+    
+    def get_lunch_main_list(self):
+        return self.data[self.data.lunch_main == True]['name'].unique().tolist()
+    
+    def get_lunch_filler_list(self):
+        return self.data[self.data.lunch_filler == True]['name'].unique().tolist()
+    
+    def get_lunch_salad_list(self):
+        return self.data[self.data.lunch_salad == True]['name'].unique().tolist()
+    
+    def get_dinner_list(self):
+        return self.data[self.data.dinner == True]['name'].unique().tolist()
+
+
 class Recipe:
     
     def __init__(self, name: str, data: pd.DataFrame):
@@ -77,6 +105,7 @@ def flatten_dictionary(dictionary: dict[float]) -> dict[float]:
     #flattened.pop(' ', None)    
     
     return flattened
+
 
 def convert_recipes_to_prompt(merged_recipes: dict, textbox: tk.CTkTextbox):
     textbox.delete(index1='0.0', index2='500.0')

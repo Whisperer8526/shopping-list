@@ -97,7 +97,7 @@ def build_option_menu(
         variable=tk.StringVar(),
         corner_radius=0,
         anchor='w',
-        dynamic_resizing=True,
+        dynamic_resizing=False,
         font=('Arial', 10),
         button_color=color,
         fg_color=color
