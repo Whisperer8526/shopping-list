@@ -118,6 +118,7 @@ def convert_recipes_to_prompt(merged_recipes: dict, textbox: tk.CTkTextbox):
             unit = f'[{item[0]}]'
             value = f'{item[1]}'
 
+            # Dirty way of displaying items in even table-like form in apps text-box
             string = f'''{ingredient}{' '*(unit_index-len(ingredient))}{unit}{' '*(value_index-len(unit))}{value}\n'''
             
             textbox.insert(index=f'{i}.0', text=string)
