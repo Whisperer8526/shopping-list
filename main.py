@@ -5,7 +5,11 @@ import customtkinter as tk
 from gui import *
 from data_processing import Data
 
+
 if __name__ == "__main__":
+
+    DATA = Data('recipe_db.xlsx')
+    NUMBER_OF_PORTIONS = 0
 
     # Define window resolution and app name
     root = tk.CTk()
@@ -19,15 +23,7 @@ if __name__ == "__main__":
     for row in range(20):
         root.rowconfigure(row, weight=1)
 
-    DATA = Data('recipe_db.xlsx')
-
-    #def load_data(data_file: str):
-    #    global DATA
-    #    DATA = pd.read_excel(data_file)
-
-    # Load data from excel file
-    #load_data('recipe_db.xlsx')
-
+    
     settings = {
         'breakfast' : {
             'item_list' : DATA.get_breakfast_list(),
@@ -62,12 +58,12 @@ if __name__ == "__main__":
     week_frame = build_week_frame_table(root,
                                         option_menu_objects, 
                                         settings)
-    week_frame.grid(row=0, column=0, columnspan=8, rowspan=5, padx=10, sticky='nwe')
+    week_frame.grid(row=0, column=0, columnspan=8, rowspan=5, padx=10, sticky='nwes')
 
     # Create 'Clear' button
     clear_options_button = tk.CTkButton(root,
                                         text="Clear choices", 
-                                        command=lambda: clear_options_event(option_menu_objects),
+                                        command=lambda: clear_options_event(option_menu_objects, number_of_portions_menu, textbox),
                                         fg_color='#A93226')
     clear_options_button.grid(row=5, column=0, sticky='wesn', padx=10)
 
@@ -88,8 +84,10 @@ if __name__ == "__main__":
                                                 text="Generate shopping list", 
                                                 command=lambda: generate_results_event(data=DATA.data, 
                                                                                        option_menu_objects=option_menu_objects, 
+                                                                                       number_of_portions=NUMBER_OF_PORTIONS,
                                                                                        to_excel=False,
-                                                                                       textbox=textbox),
+                                                                                       textbox=textbox
+                                                                                       ),
                                                 corner_radius=0                                       )
     generate_shopping_list_button.grid(row=5, column=4, columnspan=4, padx=10, sticky='wes')
 
@@ -101,6 +99,28 @@ if __name__ == "__main__":
                                                                                 to_excel=True),
                                         fg_color='#10793F')
     save_to_excel_button.grid(row=19, column=4, padx=10, pady=10, sticky='nw')
+
+    # Number of portions menu
+
+    def portions_menu_callback(choice):
+        global NUMBER_OF_PORTIONS
+        NUMBER_OF_PORTIONS = int(choice)
+
+    number_of_portions_label = tk.CTkLabel(root, text='Number of portions:', font=("Arial", 14))
+    number_of_portions_label.grid(row=6, column=0, sticky='wesn', padx=10)
+
+    number_of_portions_menu = tk.CTkOptionMenu(
+        root,
+        values= [str(n) for n in range(1,6)],
+        command=portions_menu_callback,
+        variable=tk.StringVar(),
+        corner_radius=0,
+        anchor='center',
+        dynamic_resizing=False,
+        font=('Arial', 14)
+        )
+    number_of_portions_menu.set('Choose number of portions')
+    number_of_portions_menu.grid(row=6, column=1, sticky='we')
 
     
 

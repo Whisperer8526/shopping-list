@@ -11,13 +11,18 @@ def option_menu_callback(choice):
     choice
 
 
-def clear_options_event(option_menu_objects: dict[tk.CTkOptionMenu]):
+def clear_options_event(option_menu_objects: dict[tk.CTkOptionMenu], number_of_portions_menu: tk.CTkOptionMenu, textbox: tk.CTkTextbox):
     for option in option_menu_objects:
         option_menu_objects[option].set('')
+
+    number_of_portions_menu.set('Choose number of portions')
+    
+    textbox.delete(index1='0.0', index2='500.0')
 
 
 def generate_results_event(data: pd.DataFrame, 
                            option_menu_objects: dict[tk.CTkOptionMenu], 
+                           number_of_portions: int,
                            to_excel: bool, 
                            textbox: tk.CTkTextbox):
 
@@ -33,8 +38,9 @@ def generate_results_event(data: pd.DataFrame,
             if recipe.double_portion:
                 selected_recipes.append(recipe.get_ingredients())
             else:
-                selected_recipes.append(recipe.get_ingredients())
-                selected_recipes.append(recipe.get_ingredients())
+                for _ in range(number_of_portions):
+                    selected_recipes.append(recipe.get_ingredients())
+                
 
     
     merged_recipes = merge_ingredient_dictionaries(selected_recipes)
@@ -61,6 +67,7 @@ def generate_results_event(data: pd.DataFrame,
             convert_recipes_to_prompt(merged_recipes, textbox)
             print(result_dataframe)
 
+
 def convert_recipes_to_prompt(merged_recipes: dict, textbox: tk.CTkTextbox):
     textbox.delete(index1='0.0', index2='500.0')
 
@@ -72,6 +79,7 @@ def convert_recipes_to_prompt(merged_recipes: dict, textbox: tk.CTkTextbox):
             unit = f'[{item[0]}]'
             value = f'{item[1]}'
 
+            # Transforms items into evenly spaced table-like string
             string = f'''{ingredient}{' '*(unit_index-len(ingredient))}{unit}{' '*(value_index-len(unit))}{value}\n'''
             
             textbox.insert(index=f'{i}.0', text=string)
